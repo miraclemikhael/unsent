@@ -1,62 +1,69 @@
-UNSENT · folder layout (Update 5: files split into folders, no feature change)
+# Unsent 💌
+### A Private Space for Your Unsent Thoughts
 
-index.php             front controller. Every page is index.php?p=<name> (links did not change)
-login.php             sign in                      ?p=signin
-register.php          create account               ?p=register  (or ?p=signin&new=1)
-forgot-password.php   recover password            ?p=recover
-process_login.php     POST: login, register, verify code, new password
-logout.php            POST: log out
-404.php               unknown ?p= name
+**Unsent** is a digital journaling application designed to provide a safe, private, and comfortable space for people to express their thoughts, emotions, and words they may not be ready to share with others.
 
-config/               config.php (DEMO, timezone, headers, session, CSRF), database.php (data.json read/write),
-                      data.json (your data), migrate.php (data.json -> MySQL, run: php migrate.php from this folder)
-includes/             functions.php, icons.php, header.php (<head>), sidebar.php, layout-page.php (page top bar, letter rows),
-                      footer.php (scripts), bootstrap.php (data + current user), process.php (POST dispatcher)
-user/                 home.php, write.php (also the editor), unsent.php, profile.php, process_user.php, process_letter.php
-admin/                index.php (shell + shared numbers), overview.php, users.php, activity.php, audit.php, settings.php,
-                      functions.php, process_admin.php
-css/                  style.css, fx3d.css
-js/                   core.js first, then one file per feature (order is set in includes/footer.php), fx3d.js (3D, module)
-img/                  your images (logo, mood, postcards ...). Not in this zip, copy yours in.
-uploads/              new profile photos + postcard fronts. Old files in img/uploads/ still work.
+Sometimes, there are things we want to say but cannot bring ourselves to express. Whether it's a letter to someone special, a message to our past selves, or feelings that are difficult to put into words, Unsent allows users to write freely without the pressure of sending or receiving a response.
 
-Notes
-- config/, includes/, admin/, user/ have a .htaccess that blocks direct web access (data.json holds password hashes).
-- uploads/ has a .htaccess that blocks scripts.
-- Every included file starts with defined('ROOT') || exit; so opening it by URL shows nothing.
-- Move: old root files app.js, style.css, fx3d.css, fx3d.js, migrate.php, data.json are replaced by the folders above. Delete the old ones.
+Rather than functioning as a traditional messaging application, Unsent focuses on personal expression, emotional reflection, and the freedom to write without expectations.
 
------ Update 4 notes (unchanged) -----
-Update 4: bug fixes + polish. Replace index.php, app.js, fx3d.css, fx3d.js. style.css, data.json, migrate.php unchanged.
+## ✨ Features
 
-SECURITY
-- CSRF token on every POST form and every fetch (was admin-only).
-- Password recovery: the demo code 72550 let anyone reset ANY account, admins included. Now: member accounts only, and only while DEMO is true.
-- Stored XSS in letter bodies closed (cleanbody kept onclick=, style= etc. on <p>/<b>/<div>). Old letters are cleaned when opened.
-- Session id regenerated on sign-in/sign-up, HttpOnly + SameSite cookie, login throttle (6 tries, 1 min), nosniff / frame headers.
-- Prefilled demo email + password removed from the sign-in form. Top of index.php: const DEMO = true; set it to false before going live.
+- **Private Journaling** — Write down personal thoughts, feelings, and messages in a comfortable space.
+- **Unsent Letters** — Create letters addressed to yourself, someone else, your past, or anyone meaningful to you.
+- **Personal Expression** — Express emotions freely without the pressure of direct communication.
+- **Organized Entries** — Keep written thoughts and letters organized for future reflection.
+- **Clean User Interface** — Enjoy a simple, calm, and user-friendly design.
+- **Personalization** — Customize the writing experience to make it feel more personal.
 
-DATA BUGS
-- Delete my account left the letters (and uploaded images) in data.json; a new account with the same email inherited them. Now removed.
-- Emails are lowercased and compared case-insensitively (sign-in, owner of letters).
-- data.json is written atomically with a lock; an unreadable file stops the app instead of being overwritten by the demo seed.
-- Profile: username/name/email/phone validated, clear error toast instead of silently reverting.
-- Mood: the per-mood hint/placeholder used $tm before it was set. Fixed. Undefined-index warnings removed.
-- Dates use const TZ (Asia/Jakarta) so "today" and mood streaks match your clock.
+## 🎯 Project Objectives
 
-EDITOR
-- Colour swatches also ran the toolbar handler (stole focus, bogus execCommand). Fixed.
-- Autosave: one save at a time (a fast second save made a duplicate letter), saves when the tab is hidden, warns before leaving mid-save.
-- Paste is plain text; paragraphs are always <p>.
-- New letters start blank with placeholders (no sample letter to delete). Stray </div> removed.
+Unsent aims to make emotional expression more accessible by providing a digital space where users can process their thoughts and feelings through writing.
 
-MOTION (matches the "calm" rule)
-- app.js still carried the old tilt / ripple / drifting sheets / parallax / duplicate count-up layer. Removed. Only the back-to-top button stays.
-- Card lift while the postcard turns was cancelled by a hover !important rule. Fixed.
-- Icon draw leaves no gap at the path seam.
+The project focuses on:
+- Encouraging self-reflection and emotional expression.
+- Providing an alternative to sending messages directly.
+- Creating a comfortable and intuitive journaling experience.
+- Applying Human-Computer Interaction (HCI) principles to improve usability and accessibility.
 
-UI
-- Greeting follows the time of day. Password strength meter (replaces the pop-up). Skip link, visible focus rings, 44px touch targets,
-  "no letters match" note, OTP paste + numeric, 3D chart labelled for screen readers, balanced headings, quiet scrollbars.
+## 🎨 Design & User Experience
 
-Undo: put the old files back.
+The interface is designed with simplicity and comfort in mind, helping users focus on their writing rather than unnecessary distractions.
+
+The design process considers usability principles, including consistency, clear feedback, error prevention, user control, and ease of navigation. These principles help create a more intuitive and comfortable experience.
+
+The application is developed as part of a web application development project, with its interface and user flows designed and prototyped in Figma.
+
+## 🛠️ Technologies Used
+
+- **Frontend:** HTML, CSS, JavaScript
+- **Backend:** PHP
+- **Local Development Environment:** Laragon & Devilbox
+- **Database:** MySQL (if applicable)
+- **UI/UX Design & Prototyping:** Figma
+- **Version Control:** Git and GitHub
+
+## 🔮 Future Improvements
+
+Potential improvements for Unsent include:
+- Enhanced letter organization and search.
+- Additional personalization options.
+- Improved writing and journaling interactions.
+- Responsive layouts for different screen sizes.
+- Additional privacy and security features.
+
+## 👥 Project Information
+
+- **Project Name:** Unsent
+- **Project Type:** Digital Journaling Application
+- **Field:** Human-Computer Interaction (HCI) / UI/UX Design
+- **Design Tool:** Figma
+- **Repository:** [miraclemikhael/unsent](https://github.com/miraclemikhael/unsent)
+
+## 📝 License
+
+This project is developed for educational purposes. Add a license if you intend to distribute or reuse the project publicly.
+
+---
+
+*Some words are easier to write than to say. Unsent gives them a place to exist.* 💙

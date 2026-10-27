@@ -39,24 +39,23 @@ The application is developed as part of a web application development project, w
 - **Frontend:** HTML, CSS, JavaScript
 - **Backend:** PHP
 - **Local Development Environment:** Laragon & Devilbox
-- **Database:** MySQL (if applicable)
+- **Database:** MySQL
 - **UI/UX Design & Prototyping:** Figma
+- **Code Editor:** Visual Studio Code
 - **Version Control:** Git and GitHub
 
 ## 🔮 Future Improvements
 
 Potential improvements for Unsent include:
-- Enhanced letter organization and search.
 - Additional personalization options.
 - Improved writing and journaling interactions.
-- Responsive layouts for different screen sizes.
 - Additional privacy and security features.
 
 ## 👥 Project Information
 
 - **Project Name:** Unsent
 - **Project Type:** Digital Journaling Application
-- **Field:** Human-Computer Interaction (HCI) / UI/UX Design
+- **Field:** Web Development & UI/UX Design
 - **Design Tool:** Figma
 - **Repository:** [miraclemikhael/unsent](https://github.com/miraclemikhael/unsent)
 

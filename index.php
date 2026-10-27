@@ -13,20 +13,20 @@ require ROOT . '/admin/functions.php';
 require ROOT . '/includes/bootstrap.php';
 require ROOT . '/includes/process.php';
 
-if (!$me && !in_array($p, ['signin', 'recover'])) go('signin');
-if ($p == 'admin' && !isadmin()) go('home');
+if (!$me && !in_array($p, ['signin', 'recover'])) redirect_to_page('signin');
+if ($p == 'admin' && !is_admin()) redirect_to_page('home');
 $v = in_array($_GET['v'] ?? '', ['overview', 'users', 'activity', 'audit', 'settings']) ? $_GET['v'] : 'overview';
 if ($p == 'admin' && isset($_GET['export'])) {
-    [$ev] = act($d);
+    [$ev] = count_daily_activity($d);
     $cs = fn($x) => preg_match('/^[=+\-@]/', (string)$x) ? "'" . $x : $x;
     header('Content-Type: text/csv');
     header('Content-Disposition: attachment; filename="unsent-users-' . date('Y-m-d') . '.csv"');
     $o = fopen('php://output', 'w');
     fputcsv($o, ['Name', 'Username', 'Email', 'Role', 'Status', 'Joined', 'Last active']);
-    foreach ($d['users'] as $u) fputcsv($o, [$cs($u['name']), $cs($u['username']), $cs($u['email']), $u['role'] ?? 'member', $u['status'] ?? 'active', jn($u, $ev), la($u, $ev)]);
+    foreach ($d['users'] as $u) fputcsv($o, [$cs($u['name']), $cs($u['username']), $cs($u['email']), $u['role'] ?? 'member', $u['status'] ?? 'active', joined_date($u, $ev), last_active_date($u, $ev)]);
     exit;
 }
-$L = $me ? array_values(array_filter($d['letters'], fn($l) => own($l, $me['email']))) : [];
+$L = $me ? array_values(array_filter($d['letters'], fn($l) => is_owner($l, $me['email']))) : [];
 usort($L, fn($a, $b) => strtotime($b['date']) <=> strtotime($a['date']));
 
 

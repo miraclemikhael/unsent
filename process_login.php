@@ -20,9 +20,9 @@ if ($a == 'login') {
         $_SESSION['u'] = $u['email'];
         if (($u['role'] ?? '') === 'admin') {
             $_SESSION['flash'] = 'Signed in as admin';
-            go('admin');
+            redirect_to_page('admin');
         }
-        go('home');
+        redirect_to_page('home');
     }
     if (!$err) {
         usleep(250000);
@@ -48,7 +48,7 @@ if ($a == 'register') {
     } elseif ($name === '' || !filter_var($em, FILTER_VALIDATE_EMAIL)) {
         $err = 'Please enter your name and a valid email.';
         $p = 'signin';
-    } elseif (!pwok($pw)) {
+    } elseif (!password_ok($pw)) {
         $err = 'Use at least 8 characters with a letter and a number.';
         $p = 'signin';
     } elseif ($pw !== ($_POST['pw2'] ?? '')) {
@@ -62,10 +62,10 @@ if ($a == 'register') {
         $n = 2;
         while (in_array($un, array_column($d['users'], 'username'))) $un = $base . $n++;
         $d['users'][] = ['name' => $name, 'username' => $un, 'email' => $em, 'phone' => '', 'private' => 1, 'hash' => password_hash($pw, PASSWORD_DEFAULT), 'joined' => date('Y-m-d')];
-        sv($d);
+        save_data($d);
         session_regenerate_id(true);
         $_SESSION['u'] = $em;
-        go('home');
+        redirect_to_page('home');
     }
 }
 if ($a == 'verify') {
@@ -77,19 +77,19 @@ if ($a == 'verify') {
     elseif (!$hit || ($hit['role'] ?? '') === 'admin') $err = 'We couldn’t find a member account with that email.';
     elseif (($_POST['code'] ?? '') === '72550') {
         $_SESSION['rec'] = $hit['email'];
-        go('recover');
+        redirect_to_page('recover');
     } else $err = 'Wrong code. Demo code is 72550.';
 }
 if ($a == 'recover') {
-    if (!DEMO || empty($_SESSION['rec'])) go('recover');
-    if (!pwok($_POST['pw'] ?? '')) {
+    if (!DEMO || empty($_SESSION['rec'])) redirect_to_page('recover');
+    if (!password_ok($_POST['pw'] ?? '')) {
         $err = 'Use at least 8 characters with a letter and a number.';
         $p = 'recover';
     } else {
         foreach ($d['users'] as $i => $u) if (strtolower($u['email']) == strtolower($_SESSION['rec'])) $d['users'][$i]['hash'] = password_hash($_POST['pw'], PASSWORD_DEFAULT);
-        sv($d);
+        save_data($d);
         unset($_SESSION['rec']);
         $_SESSION['flash'] = 'Password updated. You can sign in now.';
-        go('signin');
+        redirect_to_page('signin');
     }
 }

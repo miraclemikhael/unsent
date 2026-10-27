@@ -10,4 +10,4 @@ if (!empty($_SESSION['flash'])) {
 }
 $JS = ['core', 'auth', 'write', 'letters', 'profile', 'password', 'sidebar', 'home', 'admin', 'theme', 'mood', 'templates', 'effects'];
 foreach ($JS as $j) echo '<script src="js/' . $j . '.js?v=' . @filemtime(ROOT . "/js/$j.js") . '"></script>';
-echo '<script type="module" src="js/fx3d.js?v=' . @filemtime(ROOT . '/js/fx3d.js') . '"></script></body></html>';
+echo '<script type="module" src="js/motion.js?v=' . @filemtime(ROOT . '/js/motion.js') . '"></script></body></html>';

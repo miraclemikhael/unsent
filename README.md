@@ -67,3 +67,20 @@ This project is developed for educational purposes. Add a license if you intend 
 ---
 
 *Some words are easier to write than to say. Unsent gives them a place to exist.* 💙
+
+## 🗂️ File map (for beginners)
+
+- `index.php` — front door. Reads `?p=page` and loads the right page.
+- `login.php`, `register.php`, `forgot-password.php`, `logout.php` — sign in / out pages.
+- `process_*.php` — scripts that receive form posts (save data, then redirect).
+- `user/` — pages for normal users: home, write, unsent letters, profile.
+- `admin/` — pages for admins: overview, users, activity, audit log, settings.
+- `includes/` — shared helpers: `functions.php` (small tools), `header.php`, `footer.php`, `sidebar.php`, `icons.php`.
+- `config/` — settings (`config.php`), data load/save (`database.php`), the data file (`data.json`).
+- `css/style.css` — main look. `css/motion.css` — fades and flips. `css/responsive.css` — phone layout.
+- `js/` — browser scripts, one per page feature.
+
+### Helper names
+
+Short helper names were renamed to readable ones, e.g. `e()` → `esc()`, `ic()` → `icon()`, `db()` → `load_data()`,
+`sv()` → `save_data()`, `go()` → `redirect_to_page()`, `isadmin()` → `is_admin()`.

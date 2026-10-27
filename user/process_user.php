@@ -9,7 +9,7 @@ defined('ROOT') || exit;
 if ($a == 'theme') {
     if (in_array($_POST['v'] ?? '', ['light', 'dark'])) {
         $d['users'][$mi]['a_theme'] = $_POST['v'];
-        sv($d);
+        save_data($d);
     }
     exit;
 }
@@ -21,9 +21,9 @@ if ($a == 'mood') {
         $ms[date('Y-m-d')] = ['m' => $m, 'g' => $g];
         krsort($ms);
         $d['users'][$mi]['moods'] = array_slice($ms, 0, 60, true);
-        sv($d);
+        save_data($d);
     }
-    go('home');
+    redirect_to_page('home');
 }
 if ($a == 'avup') {
     header('Content-Type: application/json');
@@ -40,17 +40,17 @@ if ($a == 'avup') {
         echo json_encode(['ok' => 0, 'err' => 'Upload failed, try again.']);
         exit;
     }
-    rmf($d['users'][$mi]['avatar'] ?? '');
+    delete_upload($d['users'][$mi]['avatar'] ?? '');
     $d['users'][$mi]['avatar'] = $n;
-    sv($d);
+    save_data($d);
     echo json_encode(['ok' => 1, 'src' => $n]);
     exit;
 }
 if ($a == 'avrm') {
     header('Content-Type: application/json');
-    rmf($d['users'][$mi]['avatar'] ?? '');
+    delete_upload($d['users'][$mi]['avatar'] ?? '');
     unset($d['users'][$mi]['avatar']);
-    sv($d);
+    save_data($d);
     echo json_encode(['ok' => 1]);
     exit;
 }
@@ -76,24 +76,24 @@ if ($a == 'profile') {
     else $bad = $bad ?: 'Usernames use 2–30 letters, numbers, dots or dashes, and must be unique.';
     $d['users'][$mi]['phone'] = preg_replace('/[^\d+\-\s().]/', '', mb_substr(trim($_POST['phone'] ?? ''), 0, 25));
     $d['users'][$mi]['email'] = $new;
-    if ($new != $old) foreach ($d['letters'] as $j => $l) if (own($l, $old)) $d['letters'][$j]['owner'] = $new;
+    if ($new != $old) foreach ($d['letters'] as $j => $l) if (is_owner($l, $old)) $d['letters'][$j]['owner'] = $new;
     $_POST['email'] = $new;
     $_SESSION['flash'] = $bad ?: 'Changes saved';
     if ($bad) $_SESSION['flash_t'] = 'error';
     $d['users'][$mi]['private'] = isset($_POST['private']) ? 1 : 0;
     foreach (['a_calm'] as $k) $d['users'][$mi][$k] = isset($_POST[$k]) ? 1 : 0;
     $d['users'][$mi]['a_theme'] = in_array($_POST['a_theme'] ?? '', ['light', 'dark', 'auto']) ? $_POST['a_theme'] : 'light';
-    sv($d);
+    save_data($d);
     $_SESSION['u'] = $_POST['email'];
-    go('profile#' . preg_replace('/\W/', '', $_POST['tab'] ?? 'profile'));
+    redirect_to_page('profile#' . preg_replace('/\W/', '', $_POST['tab'] ?? 'profile'));
 }
 if ($a == 'delacct') {
-    rmf($d['users'][$mi]['avatar'] ?? '');
-    foreach ($d['letters'] as $l) if (own($l, $me['email'])) rmf($l['front'] ?? '');
-    $d['letters'] = array_values(array_filter($d['letters'], fn($l) => !own($l, $me['email'])));
+    delete_upload($d['users'][$mi]['avatar'] ?? '');
+    foreach ($d['letters'] as $l) if (is_owner($l, $me['email'])) delete_upload($l['front'] ?? '');
+    $d['letters'] = array_values(array_filter($d['letters'], fn($l) => !is_owner($l, $me['email'])));
     unset($d['users'][$mi]);
     $d['users'] = array_values($d['users']);
-    sv($d);
+    save_data($d);
     session_destroy();
-    go('signin');
+    redirect_to_page('signin');
 }

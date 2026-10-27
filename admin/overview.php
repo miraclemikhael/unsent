@@ -26,9 +26,9 @@ $cards = [
 ];
 echo '<div class=sg>';
 foreach ($cards as $c) {
-    $dt = dlt($c[1], $c[2], $pl);
-    echo '<div class="card sc ' . $c[5] . '"><div class=between><small>' . $c[0] . '</small>' . ic($c[3], 18) . '</div><div class=num><big>' . number_format($c[1]) . '</big>' . ($dt ? '<em class="dl' . ($dt[0] == '-' ? ' neg' : '') . '">' . $dt . '</em>' : '') . '</div><small class=mut>' . $c[4] . '</small></div>';
+    $dt = change_text($c[1], $c[2], $pl);
+    echo '<div class="card sc ' . $c[5] . '"><div class=between><small>' . $c[0] . '</small>' . icon($c[3], 18) . '</div><div class=num><big>' . number_format($c[1]) . '</big>' . ($dt ? '<em class="dl' . ($dt[0] == '-' ? ' neg' : '') . '">' . $dt . '</em>' : '') . '</div><small class=mut>' . $c[4] . '</small></div>';
 }
 echo '</div><div class="card chart"><div class=between><div><h2 class=hand>A growing space to write</h2><small class=mut>User activity · unique accounts active each day · ' . date('F Y', $t0) . '</small></div><small class=lg><i></i>Daily active users</small></div><div class=chw id=ch></div></div>';
 echo '<script>window.AD=' . json_encode(['d' => $days, 'v' => $vals]) . '</script>';
-ausers($d, $ev, 4, $v);
+admin_users_table($d, $ev, 4, $v);

@@ -3207,25 +3207,6 @@ html[data-eff="dark"] .btn.yl {
   opacity: 0.45;
   cursor: default;
 }
-.demo {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  text-align: left;
-  padding: 12px 14px;
-  border: 1.5px dashed var(--line);
-  border-radius: 10px;
-  background: none;
-  color: var(--ink);
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-}
-.demo:hover,
-.demo:hover small {
-  background: var(--y);
-  border-color: transparent;
-  color: #292929;
-}
 .adm .aw {
   display: flex;
   gap: 8px;
@@ -4092,14 +4073,6 @@ html[data-eff="dark"] .at td {
 html[data-eff="dark"] .at tbody tr.on {
   background: #332e24;
 }
-html[data-eff="dark"] .demo {
-  border-color: #4a443b;
-}
-html[data-eff="dark"] .demo:hover,
-html[data-eff="dark"] .demo:hover small {
-  background: var(--y);
-  color: #292929;
-}
 html[data-eff="dark"] .sum .green {
   margin-top: 4px;
 }
@@ -4152,56 +4125,6 @@ html.fx :is(input, textarea, select):focus {
   transition: box-shadow .2s, border-color .2s;
 }
 
-/* ---------- 3D backdrop: drifting paper sheets ---------- */
-.fx-scene {
-  position: fixed; inset: 0; z-index: -1; overflow: hidden;
-  pointer-events: none; perspective: 900px;
-}
-.fx-stage {
-  position: absolute; inset: 0; transform-style: preserve-3d;
-  transform: rotateX(var(--py, 0deg)) rotateY(var(--px, 0deg));
-}
-.fx-sheet {
-  position: absolute; left: var(--x); top: var(--y);
-  width: 84px; height: 112px; border-radius: 5px;
-  translate: 0 0 var(--z); scale: var(--s);
-  /* light mode: warm, clearly visible paper with a real edge + shadow */
-  background: linear-gradient(135deg, #f3e6cf, #dcc39b);
-  border: 1px solid #5a42281f;
-  box-shadow: 0 20px 38px #2a1c0a40, 0 2px 0 #ffffff80 inset;
-  opacity: .9;
-  animation: fx-drift var(--d) ease-in-out infinite alternate;
-}
-.fx-sheet::before {
-  content: ""; position: absolute; inset: 18px 13px 14px;
-  background: repeating-linear-gradient(#0000 0 9px, #3b2a1440 9px 10px);
-}
-.fx-sheet::after { /* folded corner */
-  content: ""; position: absolute; right: -1px; top: -1px; width: 20px; height: 20px;
-  border-radius: 0 5px 0 0;
-  background: linear-gradient(225deg, #fcf7f4 50%, #00000030 50%);
-}
-.fx-sheet.y { background: linear-gradient(135deg, #ffe17a, #f0c13c); }
-.fx-sheet.k { background: linear-gradient(135deg, #d9b98a, #b98f58); }
-.fx-sheet.p { background: linear-gradient(135deg, #f4bdb3, #db8d82); }
-.fx-sheet.b { background: linear-gradient(135deg, #c3d3e6, #94acc9); }
-html[data-eff="dark"] .fx-sheet {
-  background: linear-gradient(135deg, #4a4458, #2f2a38);
-  border-color: #ffffff1f;
-  box-shadow: 0 18px 38px #000000a0, 0 1px 0 #ffffff26 inset; opacity: .75;
-}
-html[data-eff="dark"] .fx-sheet::before { background: repeating-linear-gradient(#0000 0 9px, #f1ece626 9px 10px); }
-html[data-eff="dark"] .fx-sheet::after { background: linear-gradient(225deg, #17141c 50%, #ffffff22 50%); }
-html[data-eff="dark"] .fx-sheet.y { background: linear-gradient(135deg, #a89c4a, #7d7339); }
-html[data-eff="dark"] .fx-sheet.k { background: linear-gradient(135deg, #7a6648, #5a4a32); }
-html[data-eff="dark"] .fx-sheet.p { background: linear-gradient(135deg, #8a5a58, #66403f); }
-html[data-eff="dark"] .fx-sheet.b { background: linear-gradient(135deg, #5a6d86, #3f4e63); }
-@keyframes fx-drift {
-  from { transform: translate3d(0, 0, 0) rotateX(var(--r)) rotateY(0) rotateZ(0); }
-  50%  { transform: translate3d(34px, -56px, 60px) rotateX(calc(var(--r) + 38deg)) rotateY(150deg) rotateZ(12deg); }
-  to   { transform: translate3d(-24px, -110px, 0) rotateX(var(--r)) rotateY(320deg) rotateZ(-10deg); }
-}
-
 /* ---------- scroll progress + back to top ---------- */
 .fx-bar {
   position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 60; pointer-events: none;
@@ -4220,26 +4143,6 @@ html[data-eff="dark"] .fx-sheet.b { background: linear-gradient(135deg, #5a6d86,
 .fx-top:hover { scale: 1.08; }
 .fx-top:active { scale: .94; }
 
-/* ---------- 3D tilt cards (gets .fx-t from JS) ---------- */
-.fx-t {
-  transition: opacity .6s var(--ease) var(--rd, 0s), scale .6s var(--ease) var(--rd, 0s),
-              rotate .3s var(--ease), translate .3s var(--ease), box-shadow .3s;
-}
-.fx-t.tilt { will-change: rotate; }
-.fx-t.tilt:hover { translate: 0 -5px; box-shadow: 0 26px 48px #2a2a2a24; }
-html[data-eff="dark"] .fx-t.tilt:hover { box-shadow: 0 26px 52px #000000aa; }
-.fx-t.tilt::after {
-  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), #ffffff3d, #0000 55%);
-  opacity: 0; transition: opacity .3s;
-}
-html[data-eff="dark"] .fx-t.tilt::after { background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), #ffec8522, #0000 55%); }
-.fx-t.tilt:hover::after { opacity: 1; }
-
-/* rows, choices, week dots: lift only */
-.fx-t.lift:hover { translate: 0 -3px; box-shadow: 0 16px 30px #2a2a2a1c; }
-html[data-eff="dark"] .fx-t.lift:hover { box-shadow: 0 16px 34px #0000008c; }
-.fx-t.lift:active { scale: .985; }
 
 /* scroll reveal (opacity + scale only, so hover transforms stay free) */
 .fx-rv { opacity: 0; scale: .96; }
@@ -4279,18 +4182,16 @@ html.fx :is(.streak, .stats big) { font-variant-numeric: tabular-nums; }
 
 /* ---------- small screens: calmer, cheaper ---------- */
 @media (max-width: 900px) {
-  .fx-sheet { width: 62px; height: 84px; }
   .fx-top { right: 14px; bottom: 14px; }
 }
 
 /* ---------- respect reduced motion + your "calm" setting ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .fx-scene, .fx-bar { display: none; }
-  .fx-t { transition: none !important; }
+  .fx-bar { display: none; }
   .fx-rv { opacity: 1 !important; scale: 1 !important; }
   html.fx :is(.reach, .empty img, .ic.hot svg) { animation: none; }
 }
-html[data-calm] :is(.fx-scene, .fx-bar) { display: none; }
+html[data-calm] :is(.fx-bar) { display: none; }
 html[data-calm] :is(.reach, .empty img, .ic.hot svg) { animation: none !important; }
 
 

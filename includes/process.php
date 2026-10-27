@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $_SESSION['flash'] = 'Your session expired. Please try again.';
         $_SESSION['flash_t'] = 'error';
-        go($me ? 'home' : 'signin');
+        redirect_to_page($me ? 'home' : 'signin');
     }
     require ROOT . '/process_login.php';   /* login, register, verify, recover */
     require ROOT . '/logout.php';

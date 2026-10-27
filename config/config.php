@@ -2,7 +2,7 @@
 /* Unsent · config: switches, headers, session, CSRF token, output filter. */
 defined('ROOT') || exit;
 /* ---- switches ----
-   DEMO: true keeps the demo admin button + the demo recovery code (72550). Set false before going live. */
+   DEMO: true keeps the demo recovery code (72550) - anyone can reset any password with it. Set false before going live. */
 const DEMO = true;
 const TZ = 'Asia/Jakarta'; /* mood days + "today" follow this zone */
 date_default_timezone_set(TZ);
@@ -14,12 +14,12 @@ session_start();
 $_SESSION['csrf'] ??= bin2hex(random_bytes(16));
 $GLOBALS['CSRF'] = $_SESSION['csrf'];
 /* every POST form gets the session token automatically */
-function csrfinj($h)
+function add_csrf_to_forms($h)
 {
     $t = '<input type=hidden name=t value="' . ($GLOBALS['CSRF'] ?? '') . '">';
     return preg_replace('~<form\b[^>]*\bmethod=["\']?post\b[^>]*>~i', '$0' . $t, $h);
 }
-ob_start(fn($h) => csrfinj(preg_replace_callback('~img/(\w+)\.png~', function ($m) {
+ob_start(fn($h) => add_csrf_to_forms(preg_replace_callback('~img/(\w+)\.png~', function ($m) {
     $f = is_file(ROOT . "/img/{$m[1]}.svg") ? "img/{$m[1]}.svg" : $m[0];
     return $f . '?v=' . @filemtime(ROOT . '/' . $f);
 }, $h)));

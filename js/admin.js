@@ -29,13 +29,6 @@
       });
     }),
   );
-  const d = g("demoadm");
-  if (d)
-    d.onclick = () => {
-      document.querySelector("input[name=id]").value = d.dataset.id;
-      document.querySelector("input[name=pw]").value = d.dataset.pw;
-      document.querySelector("form.box .btn").focus();
-    };
   /* month picker */
   $(".dr input").forEach((i) => {
     i.onclick = () => i.showPicker && i.showPicker();

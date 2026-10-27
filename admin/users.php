@@ -5,4 +5,4 @@ defined('ROOT') || exit;
  * @var mixed $v
  * @var mixed $ev
  */
-ausers($d, $ev, 8, $v);
+admin_users_table($d, $ev, 8, $v);

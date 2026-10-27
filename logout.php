@@ -5,5 +5,5 @@ defined('ROOT') || exit;
  */
 if ($a == 'logout') {
     session_destroy();
-    go('signin');
+    redirect_to_page('signin');
 }

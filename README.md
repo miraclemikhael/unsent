@@ -39,23 +39,24 @@ The application is developed as part of a web application development project, w
 - **Frontend:** HTML, CSS, JavaScript
 - **Backend:** PHP
 - **Local Development Environment:** Laragon & Devilbox
-- **Database:** MySQL
+- **Database:** MySQL (if applicable)
 - **UI/UX Design & Prototyping:** Figma
-- **Code Editor:** Visual Studio Code
 - **Version Control:** Git and GitHub
 
 ## 🔮 Future Improvements
 
 Potential improvements for Unsent include:
+- Enhanced letter organization and search.
 - Additional personalization options.
 - Improved writing and journaling interactions.
+- Responsive layouts for different screen sizes.
 - Additional privacy and security features.
 
 ## 👥 Project Information
 
 - **Project Name:** Unsent
 - **Project Type:** Digital Journaling Application
-- **Field:** Web Development & UI/UX Design
+- **Field:** Human-Computer Interaction (HCI) / UI/UX Design
 - **Design Tool:** Figma
 - **Repository:** [miraclemikhael/unsent](https://github.com/miraclemikhael/unsent)
 
@@ -75,7 +76,7 @@ This project is developed for educational purposes. Add a license if you intend 
 - `user/` — pages for normal users: home, write, unsent letters, profile.
 - `admin/` — pages for admins: overview, users, activity, audit log, settings.
 - `includes/` — shared helpers: `functions.php` (small tools), `header.php`, `footer.php`, `sidebar.php`, `icons.php`.
-- `config/` — settings (`config.php`), data load/save (`database.php`), the data file (`data.json`).
+- `config/` — settings (`config.php`) and the MySQL connection + load/save (`database.php`).
 - `css/style.css` — main look. `css/motion.css` — fades and flips. `css/responsive.css` — phone layout.
 - `js/` — browser scripts, one per page feature.
 
@@ -83,3 +84,13 @@ This project is developed for educational purposes. Add a license if you intend 
 
 Short helper names were renamed to readable ones, e.g. `e()` → `esc()`, `ic()` → `icon()`, `db()` → `load_data()`,
 `sv()` → `save_data()`, `go()` → `redirect_to_page()`, `isadmin()` → `is_admin()`.
+
+## 🗄️ Database (MySQL / HeidiSQL)
+
+All data now lives in MySQL, database `unsent` (tables: `users`, `moods`, `letters`, `audit_log`, `settings`).
+
+1. Start Laragon (Apache + MySQL).
+2. In HeidiSQL: `File` → `Run SQL file...` → pick `unsent_database.sql` (kept outside Git, it holds password hashes).
+3. Open `http://unsent.test/db_test.php`. It should say "SAME. All good." Then delete `db_test.php`.
+
+MySQL login is set at the top of `config/database.php` (Laragon default: root, no password).

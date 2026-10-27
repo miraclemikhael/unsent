@@ -1,3 +1,4 @@
 uploads/
 *.sql
+!config/schema.sql
 config/data.json

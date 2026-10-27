@@ -1,0 +1,67 @@
+-- Unsent database structure (tables only, no data, safe for GitHub).
+-- HeidiSQL: File > Run SQL file... > pick this file. Safe to run again: it never deletes anything.
+-- With empty tables the site creates its first demo user by itself.
+CREATE DATABASE IF NOT EXISTS `unsent` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `unsent`;
+SET NAMES utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `pos` INT NOT NULL DEFAULT 0,
+  `name` VARCHAR(255) NULL,
+  `username` VARCHAR(255) NULL,
+  `email` VARCHAR(255) NULL,
+  `phone` VARCHAR(255) NULL,
+  `is_private` TINYINT NULL,
+  `password_hash` VARCHAR(255) NULL,
+  `role` VARCHAR(255) NULL,
+  `status` VARCHAR(255) NULL,
+  `joined` VARCHAR(255) NULL,
+  `last_active` VARCHAR(255) NULL,
+  `avatar` VARCHAR(255) NULL,
+  `theme` VARCHAR(255) NULL,
+  `calm_mode` TINYINT NULL,
+  `remind_on` TINYINT NULL,
+  `streak_on` TINYINT NULL,
+  `tips_on` TINYINT NULL,
+  `remind_time` VARCHAR(255) NULL,
+  `extra` TEXT NULL
+);
+CREATE TABLE IF NOT EXISTS `moods` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `day` VARCHAR(20) NOT NULL,
+  `mood` VARCHAR(50) NULL,
+  `note` TEXT NULL,
+  KEY (`user_id`)
+);
+CREATE TABLE IF NOT EXISTS `letters` (
+  `pos` INT NOT NULL DEFAULT 0,
+  `id` VARCHAR(40) NOT NULL PRIMARY KEY,
+  `owner_email` VARCHAR(255) NULL,
+  `kind` VARCHAR(255) NULL,
+  `recipient` VARCHAR(255) NULL,
+  `relationship` VARCHAR(255) NULL,
+  `title` VARCHAR(255) NULL,
+  `body` MEDIUMTEXT NULL,
+  `paper` VARCHAR(255) NULL,
+  `written_on` VARCHAR(255) NULL,
+  `front_image` VARCHAR(255) NULL,
+  `postcard_font` VARCHAR(255) NULL,
+  `postcard_color` VARCHAR(255) NULL,
+  `envelope_font` VARCHAR(255) NULL,
+  `envelope_size` VARCHAR(255) NULL,
+  `extra` TEXT NULL
+);
+CREATE TABLE IF NOT EXISTS `audit_log` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `at_time` VARCHAR(30) NULL,
+  `admin_name` VARCHAR(255) NULL,
+  `action` VARCHAR(255) NULL,
+  `target` VARCHAR(255) NULL,
+  `extra` TEXT NULL
+);
+CREATE TABLE IF NOT EXISTS `settings` (
+  `name` VARCHAR(50) NOT NULL PRIMARY KEY,
+  `value` TEXT NULL
+);

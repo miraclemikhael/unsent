@@ -39,7 +39,7 @@ The application is developed as part of a web application development project, w
 - **Frontend:** HTML, CSS, JavaScript
 - **Backend:** PHP
 - **Local Development Environment:** Laragon & Devilbox
-- **Database:** MySQL (if applicable)
+- **Database:** MySQL
 - **UI/UX Design & Prototyping:** Figma
 - **Version Control:** Git and GitHub
 

@@ -18,7 +18,7 @@ if ($a == 'mood') {
     if (in_array($m, ['Heavy', 'Low', 'Okay', 'Good', 'Bright'])) {
         $g = mb_substr(trim(strip_tags($_POST['g'] ?? '')), 0, 80);
         $ms = $d['users'][$mi]['moods'] ?? [];
-        $ms[date('Y-m-d')] = ['m' => $m, 'g' => $g];
+        $ms[date('Y-m-d')] = ['m' => $m, 'g' => $g, 'at' => date('Y-m-d H:i:s')];
         krsort($ms);
         $d['users'][$mi]['moods'] = array_slice($ms, 0, 60, true);
         save_data($d);

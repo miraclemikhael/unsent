@@ -10,7 +10,7 @@ if ($a == 'login') {
     $lid = strtolower(trim($_POST['id'] ?? ''));
     $lpw = (string)($_POST['pw'] ?? '');
     if (($_SESSION['lock'] ?? 0) > time()) $err = 'Too many attempts. Please wait a minute and try again.';
-    else foreach ($d['users'] as $u) if ($lid !== '' && (strtolower($u['email']) == $lid || strtolower($u['username']) == $lid) && password_verify($lpw, $u['hash'])) {
+    else foreach ($d['users'] as $i => $u) if ($lid !== '' && (strtolower($u['email']) == $lid || strtolower($u['username']) == $lid) && password_verify($lpw, $u['hash'])) {
         if (($u['status'] ?? '') === 'suspended') {
             $err = 'This account is suspended. Please contact support.';
             break;
@@ -18,6 +18,8 @@ if ($a == 'login') {
         session_regenerate_id(true);
         unset($_SESSION['fails'], $_SESSION['lock']);
         $_SESSION['u'] = $u['email'];
+        $d['users'][$i]['last_login'] = date('Y-m-d H:i:s');
+        save_data($d);
         if (($u['role'] ?? '') === 'admin') {
             $_SESSION['flash'] = 'Signed in as admin';
             redirect_to_page('admin');
@@ -61,7 +63,7 @@ if ($a == 'register') {
         $un = $base = strtolower(preg_replace('/\W/', '', $name)) ?: 'user';
         $n = 2;
         while (in_array($un, array_column($d['users'], 'username'))) $un = $base . $n++;
-        $d['users'][] = ['name' => $name, 'username' => $un, 'email' => $em, 'phone' => '', 'private' => 1, 'hash' => password_hash($pw, PASSWORD_DEFAULT), 'joined' => date('Y-m-d')];
+        $d['users'][] = ['name' => $name, 'username' => $un, 'email' => $em, 'phone' => '', 'private' => 1, 'hash' => password_hash($pw, PASSWORD_DEFAULT), 'joined' => date('Y-m-d'), 'last_login' => date('Y-m-d H:i:s'), 'pw_changed' => date('Y-m-d H:i:s')];
         save_data($d);
         session_regenerate_id(true);
         $_SESSION['u'] = $em;
@@ -86,7 +88,10 @@ if ($a == 'recover') {
         $err = 'Use at least 8 characters with a letter and a number.';
         $p = 'recover';
     } else {
-        foreach ($d['users'] as $i => $u) if (strtolower($u['email']) == strtolower($_SESSION['rec'])) $d['users'][$i]['hash'] = password_hash($_POST['pw'], PASSWORD_DEFAULT);
+        foreach ($d['users'] as $i => $u) if (strtolower($u['email']) == strtolower($_SESSION['rec'])) {
+            $d['users'][$i]['hash'] = password_hash($_POST['pw'], PASSWORD_DEFAULT);
+            $d['users'][$i]['pw_changed'] = date('Y-m-d H:i:s');
+        }
         save_data($d);
         unset($_SESSION['rec']);
         $_SESSION['flash'] = 'Password updated. You can sign in now.';

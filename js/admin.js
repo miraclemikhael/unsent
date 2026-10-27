@@ -156,6 +156,9 @@
       g("si").textContent = D.id;
       g("sj").textContent = D.jd;
       g("sl").textContent = D.la;
+      g("sli").textContent = D.li;
+      g("slo").textContent = D.lo;
+      g("spw").textContent = D.pw;
       g("sr").textContent = D.role;
       g("sact").hidden = D.self == "1";
       $("#sact [name=u]").forEach((i) => (i.value = D.email));

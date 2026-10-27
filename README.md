@@ -94,3 +94,12 @@ All data now lives in MySQL, database `unsent` (tables: `users`, `moods`, `lette
 3. Open `http://unsent.test/db_test.php`. It should say "SAME. All good." Then delete `db_test.php`.
 
 MySQL login is set at the top of `config/database.php` (Laragon default: root, no password).
+
+Every table has `created_at` and `updated_at` columns (MySQL fills them in by itself). `updated_at` only changes when a row really changes.
+
+### Times recorded
+- Every table: `created_at`, `updated_at`.
+- `users`: `last_login_at`, `last_logout_at`, `password_changed_at`.
+- `letters`: `written_at` (exact time). `moods`: `logged_at` (exact time).
+- `deleted_log`: what was deleted (users, letters) and when.
+Upgrade an old database by running `upgrade_timestamps.sql` once in HeidiSQL.

@@ -7,7 +7,7 @@ defined('ROOT') || exit;
  */
 if ($a == 'start') {
     $id = uniqid();
-    $d['letters'][] = ['id' => $id, 'owner' => $me['email'], 'kind' => $_POST['kind'] ?? 'someone', 'to' => mb_substr(trim($_POST['to'] ?? ''), 0, 40), 'rel' => '', 'title' => mb_substr(trim($_POST['title'] ?? ''), 0, 120) ?: 'Untitled letter', 'body' => '', 'paper' => 'quiet', 'date' => date('M j, Y')];
+    $d['letters'][] = ['id' => $id, 'owner' => $me['email'], 'kind' => $_POST['kind'] ?? 'someone', 'to' => mb_substr(trim($_POST['to'] ?? ''), 0, 40), 'rel' => '', 'title' => mb_substr(trim($_POST['title'] ?? ''), 0, 120) ?: 'Untitled letter', 'body' => '', 'paper' => 'quiet', 'date' => date('M j, Y'), 'at' => date('Y-m-d H:i:s')];
     save_data($d);
     redirect_to_page("editor&id=$id");
 }
@@ -22,7 +22,7 @@ if ($a == 'letter') {
         $d['letters'][$f[0]] = array_merge($d['letters'][$f[0]], $row);
     } else {
         $id = uniqid();
-        $d['letters'][] = array_merge(['id' => $id, 'owner' => $me['email'], 'rel' => '', 'date' => date('M j, Y')], $row);
+        $d['letters'][] = array_merge(['id' => $id, 'owner' => $me['email'], 'rel' => '', 'date' => date('M j, Y'), 'at' => date('Y-m-d H:i:s')], $row);
     }
     save_data($d);
     if (isset($_POST['ajax'])) {

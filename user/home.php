@@ -73,7 +73,7 @@ defined('ROOT') || exit;
                                     $x = $ml[$k] ?? null;
                                     $fut = $k > $today;
                                     if ($x) $wk++;
-                                    $t = ($k == $today ? 'Today' : date('D j M', $ts)) . ($x ? ' · ' . $x['m'] . (($x['g'] ?? '') !== '' ? ' · ' . $MP[$x['m']][3] . $x['g'] : '') : ($fut ? ' · still ahead' : ' · nothing logged'));
+                                    $t = ($k == $today ? 'Today' : date('D j M', $ts)) . (!empty($x['at']) ? ', ' . date('H:i', strtotime($x['at'])) : '') . ($x ? ' · ' . $x['m'] . (($x['g'] ?? '') !== '' ? ' · ' . $MP[$x['m']][3] . $x['g'] : '') : ($fut ? ' · still ahead' : ' · nothing logged'));
                                     if ($k == $today) $dt = $t;
                                     echo '<button type=button class="wd' . ($k == $today ? ' td' : '') . ($fut ? ' fut' : '') . '" data-t="' . esc($t) . '" aria-label="' . esc($t) . '" aria-pressed=' . ($k == $today ? 'true' : 'false') . '><span class="' . ($x ? 'log' : '') . '">' . ($x ? '<img src=img/mood/' . $MO[$x['m']] . '-on.svg alt="">' : '') . '</span><small>' . substr(date('D', $ts), 0, 1) . '</small></button>';
                                 } ?></div><small class="mut wdet" id=wdet aria-live=polite><?= esc($dt) ?></small>

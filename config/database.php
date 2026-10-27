@@ -19,11 +19,12 @@ const USER_FIELDS = [
     'joined' => 'joined', 'last_active' => 'last_active', 'avatar' => 'avatar',
     'a_theme' => 'theme', 'a_calm' => 'calm_mode',
     'n_remind' => 'remind_on', 'n_streak' => 'streak_on', 'n_tips' => 'tips_on', 'n_time' => 'remind_time',
+    'last_login' => 'last_login_at', 'last_logout' => 'last_logout_at', 'pw_changed' => 'password_changed_at',
 ];
 const LETTER_FIELDS = [
     'id' => 'id', 'owner' => 'owner_email', 'kind' => 'kind', 'to' => 'recipient', 'rel' => 'relationship',
     'title' => 'title', 'body' => 'body', 'paper' => 'paper', 'date' => 'written_on', 'front' => 'front_image',
-    'pfont' => 'postcard_font', 'pcolor' => 'postcard_color', 'efont' => 'envelope_font', 'esize' => 'envelope_size',
+    'at' => 'written_at', 'pfont' => 'postcard_font', 'pcolor' => 'postcard_color', 'efont' => 'envelope_font', 'esize' => 'envelope_size',
 ];
 const AUDIT_FIELDS = ['t' => 'at_time', 'by' => 'admin_name', 'a' => 'action', 'on' => 'target'];
 
@@ -37,6 +38,7 @@ function db_connect()
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false, /* numbers come back as numbers */
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET time_zone = '" . date('P') . "'", /* same clock as the site (config.php TZ) */
             ]);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -70,24 +72,27 @@ function array_to_row($item, $fields)
     return $row;
 }
 
-/* insert a row, or replace it when the same id already exists */
+/* insert a row, or update it when it already exists.
+   MySQL only touches updated_at when a value really changed. */
 function put_row($table, $row)
 {
-    $columns = '`' . implode('`,`', array_keys($row)) . '`';
+    $columns = array_keys($row);
+    $names = '`' . implode('`,`', $columns) . '`';
     $marks = implode(',', array_fill(0, count($row), '?'));
-    db_connect()->prepare("REPLACE INTO `$table` ($columns) VALUES ($marks)")->execute(array_values($row));
+    $changes = implode(',', array_map(fn($c) => "`$c` = VALUES(`$c`)", $columns));
+    db_connect()->prepare("INSERT INTO `$table` ($names) VALUES ($marks) ON DUPLICATE KEY UPDATE $changes")->execute(array_values($row));
 }
 
-/* delete every row of $table whose id is not in $keep */
-function delete_others($table, $keep)
+/* delete every row of $table whose id is not in $keep.
+   $label (a piece of SQL) makes a short note in deleted_log first: what was deleted and when. */
+function delete_others($table, $keep, $label = null)
 {
     $pdo = db_connect();
-    if (!$keep) {
-        $pdo->exec("DELETE FROM `$table`");
-        return;
+    $where = $keep ? ' WHERE `id` NOT IN (' . implode(',', array_fill(0, count($keep), '?')) . ')' : '';
+    if ($label) {
+        $pdo->prepare("INSERT INTO `deleted_log` (`table_name`, `row_id`, `label`) SELECT '$table', `id`, $label FROM `$table`$where")->execute(array_values($keep));
     }
-    $marks = implode(',', array_fill(0, count($keep), '?'));
-    $pdo->prepare("DELETE FROM `$table` WHERE `id` NOT IN ($marks)")->execute(array_values($keep));
+    $pdo->prepare("DELETE FROM `$table`$where")->execute(array_values($keep));
 }
 
 /* read everything from MySQL into the $d array */
@@ -104,15 +109,17 @@ function load_data()
     }
     foreach ($pdo->query('SELECT * FROM moods ORDER BY id') as $row) {
         if (!isset($position[$row['user_id']])) continue;
-        $mood = ['m' => $row['mood'], 'g' => $row['note']];
+        $mood = ['m' => $row['mood'], 'g' => $row['note'], 'at' => $row['logged_at']];
         $d['users'][$position[$row['user_id']]]['moods'][$row['day']] = array_filter($mood, fn($v) => $v !== null);
     }
     foreach ($pdo->query('SELECT * FROM letters ORDER BY pos, id') as $row) {
         $d['letters'][] = row_to_array($row, LETTER_FIELDS);
     }
     $audit = [];
-    foreach ($pdo->query('SELECT * FROM audit_log ORDER BY id') as $row) {
-        $audit[] = row_to_array($row, AUDIT_FIELDS);
+    foreach ($pdo->query('SELECT * FROM audit_log ORDER BY pos, id') as $row) {
+        $entry = row_to_array($row, AUDIT_FIELDS);
+        $entry['_id'] = (int)$row['id'];
+        $audit[] = $entry;
     }
     if ($audit) $d['audit'] = $audit;
     foreach ($pdo->query('SELECT * FROM settings') as $row) {
@@ -136,12 +143,15 @@ function save_data(&$d)
             $id = $row['id'] ?? (int)$pdo->lastInsertId();
             $d['users'][$i]['_id'] = $id;
             $keepUsers[] = $id;
-            $pdo->prepare('DELETE FROM moods WHERE user_id = ?')->execute([$id]);
+            $days = [];
             foreach (($d['users'][$i]['moods'] ?? []) as $day => $mood) {
-                put_row('moods', ['user_id' => $id, 'day' => (string)$day, 'mood' => $mood['m'] ?? null, 'note' => $mood['g'] ?? null]);
+                put_row('moods', ['user_id' => $id, 'day' => (string)$day, 'mood' => $mood['m'] ?? null, 'note' => $mood['g'] ?? null, 'logged_at' => $mood['at'] ?? null]);
+                $days[] = (string)$day;
             }
+            $marks = implode(',', array_fill(0, count($days), '?'));
+            $pdo->prepare('DELETE FROM moods WHERE user_id = ?' . ($days ? " AND day NOT IN ($marks)" : ''))->execute(array_merge([$id], $days));
         }
-        delete_others('users', $keepUsers);
+        delete_others('users', $keepUsers, "CONCAT(IFNULL(`username`, ''), ' <', IFNULL(`email`, ''), '>')");
         $pdo->exec('DELETE FROM moods WHERE user_id NOT IN (SELECT id FROM users)');
 
         /* letters */
@@ -151,11 +161,18 @@ function save_data(&$d)
             put_row('letters', $row);
             $keepLetters[] = $row['id'];
         }
-        delete_others('letters', $keepLetters);
+        delete_others('letters', $keepLetters, "CONCAT(IFNULL(`title`, ''), ' (', IFNULL(`owner_email`, ''), ')')");
 
-        /* audit log: simple way = clear it and write it again */
-        $pdo->exec('DELETE FROM audit_log');
-        foreach (($d['audit'] ?? []) as $entry) put_row('audit_log', array_to_row($entry, AUDIT_FIELDS));
+        /* audit log */
+        $keepAudit = [];
+        foreach (array_keys($d['audit'] ?? []) as $i) {
+            $row = ['id' => $d['audit'][$i]['_id'] ?? null, 'pos' => count($keepAudit)] + array_to_row($d['audit'][$i], AUDIT_FIELDS);
+            put_row('audit_log', $row);
+            $id = $row['id'] ?? (int)$pdo->lastInsertId();
+            $d['audit'][$i]['_id'] = $id;
+            $keepAudit[] = $id;
+        }
+        delete_others('audit_log', $keepAudit);
 
         /* any other top-level value (like 'wiped2') */
         foreach ($d as $name => $value) {
